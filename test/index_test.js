@@ -71,8 +71,8 @@ describe('<CardSetNameView>', function() {
 })
 
 describe('buildCardSet', function() {
-    xit('init', function() {
-	const view = mount(buildCardSet())
+    it('init', function() {
+	const view = mount(buildCardSet({}))
 	expect(view).to.not.be.null;
     })
 })

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card } from 'ui-utils'
+import { Card, SearchField } from 'ui-utils'
 
 function CardSetTable({slice, maxrows}) {
     return (<table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable" style={{display:"inline-block",marginLeft:"1rem",marginRight:"1rem"}}>
@@ -69,7 +69,7 @@ function CardSetNameView({cardsets,is_building,clickhandler}) {
 }
 
 
-function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,filter_unowned,deck,addhandler,addhandler2,removehandler2}) {
+function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,filter_unowned,deck,addhandler,addhandler2,removehandler2, menuOpts, menuHandler}) {
     let cardset = cardset_coll;
     if(cardset_filter) {
 	try {
@@ -112,18 +112,7 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 	    }
 	}
 	return (<div className="mdl-cell mdl-cell--3-col" style={{ maxWidth: "250px" }} key={card.number}>
-		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={[{id:'tcgrepublic',label:'Search TCG Republic'},{id:'tcgplayer',label:'Search TCG Player'},{id:'amazon',label:"Search Amazon"}]} menuHandler={
-		    evt => {
-			let target = evt.currentTarget.dataset.id;
-			if(target === 'tcgrepublic')
-			    
-			    window.open("https://tcgrepublic.com/product/text_search.html?q=" + encodeURIComponent(card.number));
-			else if(target === 'tcgplayer')
-			    window.open("https://www.google.com/search?q=" + encodeURIComponent("site:shop.tcgplayer.com \"" + card.number + "\" -\"Price Guide\""))
-			else if(target === 'amazon')
-			    window.open("https://www.google.com/search?q=" + encodeURIComponent("site:www.amazon.com \"" + card.number + "\""))
-		    }
-		}>
+		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={menuHandler}>
 		{(_ => {
  		    if(card.abilities) {
 			let i = 0;
@@ -136,45 +125,34 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 
 }
 
-function buildCardSet() {
+/*
+required props
+
+updateCardView - function called when series are selected
+filterCardSet - function  called when the user enters SearchField Input
+addFilterOptions - function returns array of additional filter options to display
+
+*/
+function buildCardSet(props) {
     return (<div className="mdl-grid">
 	    <div className="mdl-cell mdl-cell--6-col">
-	    <CardSetNameView {...this.state} clickhandler={this.updateCardView.bind(this)} />
+	    
+	    <CardSetNameView {...props} clickhandler={props.updateCardView} />
 	    
 	    </div>
 	    <div className="mdl-cell mdl-cell--6-col">
- 	    <SearchField value={this.state.cardset_filter} changehandler={this.filterCardSet.bind(this)}/>
-	    <Checkbox clickhandler={
-		evt => {
-		    this.setState({filter_to_deck:evt.currentTarget.checked})
-		    
-		}
-	    } label="Filter On Deck"/>
-	    <Checkbox label="Filter Owned" value={this.state.filter_owned} clickhandler={
-		evt => {
-		    this.setState({filter_owned:evt.currentTarget.checked});
-		}
-	    }/>
-	    <Checkbox label="Filter Unowned" value={this.state.filter_unowned} clickhandler={
-		evt => {
-		    this.setState({filter_unowned:evt.currentTarget.checked})
-		}
-	    }/>
-	    <button className="mdl-button mdl-js-button mdl-button--raised" onClick={
-		evt => {
-		    Cards.export_card_list(this.state.cardset_coll.map( ({id}) => id))
-			.subscribe( ({url,data}) => {
-			    window.open(url + "?keys=" + data);
-			})
-		    
-		}
-	    }>Export View</button>
+ 	    <SearchField value={props.cardset_filter} changehandler={props.filterCardSet}/>
+	    {(_ => {
+		if(props.addFilterOptions)
+		    return props.addFilterOptions
+	    })()
+	    }
 
 	    </div>
 	    
 	    {( _ => {
-		if(this.state.cardset && this.state.cardset_coll) 
-		    return <CardSetView {...this.state} addhandler={this.addCardToDeck.bind(this)} addhandler2={this.updateOwnership.bind(this)} removehandler2={this.removeOwnership.bind(this)}/>;
+		if(props.cardset && props.cardset_coll) 
+		    return <CardSetView {...props} />
 	    })()}
 	    </div>)
 }
