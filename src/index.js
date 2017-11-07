@@ -112,7 +112,10 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 	    }
 	}
 	return (<div className="mdl-cell mdl-cell--3-col" style={{ maxWidth: "250px" }} key={card.number}>
-		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={menuHandler}>
+		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={( _ => {
+		    if(menuHandler)
+			return menuHandler(card)
+		})()}>
 		{(_ => {
  		    if(card.abilities) {
 			let i = 0;
