@@ -139,8 +139,10 @@ addFilterOptions - function returns array of additional filter options to displa
 function buildCardSet(props) {
     return (<div className="mdl-grid">
 	    <div className="mdl-cell mdl-cell--6-col">
-	    
-	    <CardSetNameView {...props} clickhandler={props.updateCardView} />
+	    {( _ => {
+		if(!props.hide_name_view)
+		    return <CardSetNameView {...props} clickhandler={props.updateCardView} />
+	    })()}
 	    
 	    </div>
 	    <div className="mdl-cell mdl-cell--6-col">
