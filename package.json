@@ -26,6 +26,6 @@
   },
   "dependencies": {
       "react": "^16.0.0",
-      "ui-utils": "git+https://git@github.com/abstractalchemist/ui-utils.git#v0.0.0.5"
+      "ui-utils": "git+https://git@github.com/abstractalchemist/ui-utils.git"
   }
 }
