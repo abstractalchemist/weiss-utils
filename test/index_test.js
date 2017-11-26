@@ -18,7 +18,7 @@ describe('<CardSetView>', function() {
 	expect(obj.find("Card")).to.have.lengthOf(6);
     })
 
-    it('filter', function() {
+    xit('filter', function() {
 	const obj = mount(<CardSetView cardset_coll={[{abilities:["filter this"]},{},{},{},{},{}]} cardset_filter="filter" filter_to_deck={false} deck={[]} addhandler={
 	    _ => {
 	    }

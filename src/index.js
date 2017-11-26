@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, SearchField } from 'ui-utils'
+import { Card, SearchField, Drawer } from 'ui-utils'
 
 function CardSetTable({slice, maxrows}) {
     return (<table className="mdl-data-table mdl-js-data-table mdl-data-table--selectable" style={{display:"inline-block",marginLeft:"1rem",marginRight:"1rem"}}>
@@ -47,11 +47,32 @@ function partitioncardsets(cardsets, maxrows) {
 function CardSetNameView({cardsets,is_building,clickhandler}) {
     const maxRows = 5;
     if(cardsets) {
-	let tables = partitioncardsets(cardsets);
+	//let tables = partitioncardsets(cardsets);
 	
 	
-	return (<div id="cardset-selector">
-		{tables}
+	return (<div className="cardset-selector">
+		<div className="mdl-grid">
+		<div className="mdl-cell mdl-cell--12-col">
+		{( _ => {
+		    return cardsets.map( ({id, label}) => {
+			let box_id = `checkbox_${id}`
+			return (<div className="mdl-card card-set-label mdl-shadow--2dp">
+				<div className="mdl-card__title">
+				<p className="mdl-card__title-text">
+				{label}
+				</p>
+				</div>
+				<div className="mdl-card__actions">
+				<label className="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" htmlFor={box_id} data-id={id}>
+				<input type="checkbox" id={box_id} className="mdl-checkbox__input"></input>
+				<span className="mdl-checkbox__label"></span>
+				</label>
+				</div>
+				</div>)
+		    })
+		})()}
+		</div>
+		</div>
 		{( _ => {
 		    if(is_building) {
 			return <div className="mdl-spinner mdl-js-spinner is-active"></div>
@@ -111,18 +132,37 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 		props.addhandler = addhandler;
 	    }
 	}
-	return (<div className="mdl-cell mdl-cell--3-col" style={{ maxWidth: "250px" }} key={card.number}>
+	return (<div className="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-phone mdl-cell--2-col-tablet  card-set-cell" key={card.number} onClick={
+	    evt => {
+		console.log("card cell selected")
+		
+	    }
+	}>
 		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={( _ => {
 		    if(menuHandler)
 			return menuHandler(card)
 		})()}>
+		
 		{(_ => {
  		    if(card.abilities) {
 			let i = 0;
- 			return card.abilities.map( text => <p key={"ability_text_" + i++} style={{fontSize:"10px",lineHeight:"12px"}}>{text}</p>)
+ 			return card.abilities.map( text => <p key={"ability_text_" + i++}>{text}</p>)
 		    }
 		})()}
+	
+
+
 		</Card>
+		<dialog className="mdl-dialog" id={`dialog-abilities-${card.id}`}>
+		<div className="mdl-dialog__supporting-text">
+		{(_ => {
+ 		    if(card.abilities) {
+			let i = 0;
+ 			return card.abilities.map( text => <p key={"ability_text_" + i++}>{text}</p>)
+		    }
+		})()}
+		</div>
+		</dialog>
 		</div>)
     })
 
@@ -137,15 +177,15 @@ addFilterOptions - function returns array of additional filter options to displa
 
 */
 function buildCardSet(props) {
-    return (<div className="mdl-grid">
-	    <div className="mdl-cell mdl-cell--6-col">
+    return (<div className="mdl-grid card-set-view">
+	    <div className="mdl-cell mdl-cell--12-col card-set-names">
 	    {( _ => {
 		if(!props.hide_name_view)
 		    return <CardSetNameView {...props} clickhandler={props.updateCardView} />
 	    })()}
 	    
 	    </div>
-	    <div className="mdl-cell mdl-cell--6-col">
+	    <div className="mdl-cell mdl-cell--2-col card-set-options">
  	    <SearchField value={props.cardset_filter} changehandler={props.filterCardSet}/>
 	    {(_ => {
 		if(props.addFilterOptions)
