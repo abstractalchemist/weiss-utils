@@ -132,16 +132,15 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 		props.addhandler = addhandler;
 	    }
 	}
-	return (<div className="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-phone mdl-cell--2-col-tablet  card-set-cell" key={card.number} onClick={
-	    evt => {
-		console.log("card cell selected")
-		
-	    }
-	}>
+	return (<div className="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-phone mdl-cell--2-col-tablet  card-set-cell" key={card.number} >
 		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={( _ => {
 		    if(menuHandler)
 			return menuHandler(card)
-		})()}>
+		})()} actions={<button onClick={
+		    evt => {
+			document.querySelector(`#dialog-abilities-${card.id}`).showModal()
+		    }
+		} className="mdl-button mdl-js-button mdl-button--icon alt-display"><i className="material-icons">info</i></button>}>
 		
 		{(_ => {
  		    if(card.abilities) {
@@ -150,7 +149,7 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 		    }
 		})()}
 	
-
+		
 
 		</Card>
 		<dialog className="mdl-dialog" id={`dialog-abilities-${card.id}`}>
@@ -161,6 +160,11 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
  			return card.abilities.map( text => <p key={"ability_text_" + i++}>{text}</p>)
 		    }
 		})()}
+		</div>
+		<div className="mdl-dialog__actions">
+		<button className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onClick={evt => { document.querySelector(`#dialog-abilities-${card.id}`).close()  }}>
+		<i className="material-icons">close</i>
+		</button>
 		</div>
 		</dialog>
 		</div>)
@@ -185,7 +189,7 @@ function buildCardSet(props) {
 	    })()}
 	    
 	    </div>
-	    <div className="mdl-cell mdl-cell--2-col card-set-options">
+	    <div className="mdl-cell mdl-cell--12-col card-set-options">
  	    <SearchField value={props.cardset_filter} changehandler={props.filterCardSet}/>
 	    {(_ => {
 		if(props.addFilterOptions)
@@ -194,7 +198,6 @@ function buildCardSet(props) {
 	    }
 
 	    </div>
-	    
 	    {( _ => {
 		if(props.cardset && props.cardset_coll) 
 		    return <CardSetView {...props} />
