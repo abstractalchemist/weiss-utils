@@ -90,7 +90,7 @@ function CardSetNameView({cardsets,is_building,clickhandler}) {
 }
 
 
-function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,filter_unowned,deck,addhandler,addhandler2,removehandler2, menuOpts, menuHandler}) {
+function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,filter_unowned,deck,addhandler,addhandler2,removehandler2, menuOpts, menuHandler,show_title}) {
     let cardset = cardset_coll;
     if(cardset_filter) {
 	try {
@@ -133,7 +133,7 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 	    }
 	}
 	return (<div className="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-phone mdl-cell--2-col-tablet  card-set-cell" key={card.number} >
-		<Card {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={( _ => {
+		<Card show_title={show_title} {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={( _ => {
 		    if(menuHandler)
 			return menuHandler(card)
 		})()} actions={<button onClick={
