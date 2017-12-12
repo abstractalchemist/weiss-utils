@@ -90,15 +90,12 @@ function CardSetNameView({cardsets,is_building,clickhandler}) {
 }
 
 
-function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,filter_unowned,deck,addhandler,addhandler2,removehandler2, menuOpts, menuHandler,show_title}) {
+function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,filter_unowned,deck,addhandler,addhandler2,removehandler2, menuOpts, menuHandler,show_title, viewable}) {
     let cardset = cardset_coll;
     if(cardset_filter) {
 	try {
 	    let re = new RegExp(cardset_filter);
-	    cardset = cardset.filter( card => {
-		
-		return re.test(card.abilities) || re.test(card.number) || re.test(card.name);
-	    });
+	    cardset = cardset.filter(card => re.test(card.abilities) || re.test(card.number) || re.test(card.name))
 	}
 	catch(e) {
 	    console.log(e)
@@ -106,23 +103,20 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 	
     }
     if(filter_to_deck && deck) {
-	cardset = cardset.filter( ({id}) => {
-	    return deck.filter( ({id:deck_id}) => deck_id === id).length > 0;
-	})
-    }
-    if(filter_owned) {
-	cardset = cardset.filter( ( { ownership : { count } } ) => {
-	    return count > 0;
-	})
+	cardset = cardset.filter(card => deck.filter( ({id:deck_id}) => deck_id === card.id).length > 0)
     }
     if(filter_unowned) {
-	cardset = cardset.filter( ( { ownership : { count } } ) => {
-	    return count === 0;
-	})
-	
+	cardset = cardset.filter(card => card.ownership === undefined || card.ownership.count === 0)
     }
-    return cardset.map(card => {
-	
+    if(filter_owned) {
+	cardset = cardset.filter(card => card.ownership && card.ownership.count > 0)
+    }
+    if(viewable)
+	cardset = cardset.slice(0,viewable)
+    
+    console.time('mapper')
+    const set = cardset.map((card, index) => {
+	let display_props = {}
 
 	let count = card.ownership ? ( card.ownership.count == 0 ? card.ownership.price : card.ownership.count ) : "No Info";
 	
@@ -132,7 +126,7 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 		props.addhandler = addhandler;
 	    }
 	}
-	return (<div className="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-phone mdl-cell--2-col-tablet  card-set-cell" key={card.number} >
+	return (<div className="mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-phone mdl-cell--2-col-tablet  card-set-cell" key={card.number} {...display_props}>
 		<Card show_title={show_title} {...card} {...props} count={count} addhandler2={addhandler2} removehandler2={removehandler2} menuOpts={menuOpts} menuHandler={( _ => {
 		    if(menuHandler)
 			return menuHandler(card)
@@ -169,7 +163,8 @@ function CardSetView({cardset_coll,cardset_filter,filter_to_deck,filter_owned,fi
 		</dialog>
 		</div>)
     })
-
+    console.timeEnd('mapper')
+    return set;
 }
 
 /*

@@ -5,7 +5,7 @@ import { CardSetView, CardSetNameView,  buildCardSet } from '../src/index'
 
 
 describe('<CardSetView>', function() {
-    it('init', function() {
+    xit('init', function() {
 	const obj = mount(<CardSetView cardset_coll={[{},{},{},{},{},{}]} cardset_filter="" filter_to_deck={false} deck={[]} addhandler={
 	    _ => {
 	    }
@@ -32,7 +32,7 @@ describe('<CardSetView>', function() {
 	expect(obj.find("Card div.mdl-card__supporting-text").text()).to.equal("filter this");
     })
 
-    it('filter to deck', function() {
+    xit('filter to deck', function() {
 	const obj = mount(<CardSetView cardset_coll={[{id:1},{id:2},{id:3},{id:4},{id:5},{id:6}]} cardset_filter="" filter_to_deck={true} deck={[{id:1}]} addhandler={
 	    _ => {
 	    }
